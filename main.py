@@ -98,19 +98,19 @@ def get_birthday(birthday, year, today):
     return birth_day
 
 def get_ciba():
-    url = "http://open.iciba.com/dsapi/"
+    url = "https://apis.tianapi.com/caihongpi/index?key=9c4a04af5ac31dcd597b35700ec7206a"
     headers = {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     }
     r = get(url, headers=headers)
-    note_en = r.json()["content"]
-    note_ch = r.json()["note"]
-    return note_ch, note_en
+    #note_en = ""
+    note_ch = r.json()["result"]["content"]
+    return note_ch #, note_en
 
 
-def send_message(to_user, access_token, city_name, weather, max_temperature, min_temperature, note_ch, note_en):
+def send_message(to_user, access_token, city_name, weather, max_temperature, min_temperature, note_ch,):
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
     week_list = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]
     year = localtime().tm_year
@@ -158,10 +158,6 @@ def send_message(to_user, access_token, city_name, weather, max_temperature, min
             },
             "love_day": {
                 "value": love_days,
-                "color": get_color()
-            },
-            "note_en": {
-                "value": note_en,
                 "color": get_color()
             },
             "note_ch": {
@@ -218,8 +214,8 @@ if __name__ == "__main__":
     province, city = config["province"], config["city"]
     weather, max_temperature, min_temperature = get_weather(province, city)
     # 获取词霸每日金句
-    note_ch, note_en = get_ciba()
+    note_ch = get_ciba()
     # 公众号推送消息
     for user in users:
-        send_message(user, accessToken, city, weather, max_temperature, min_temperature, note_ch, note_en)
+        send_message(user, accessToken, city, weather, max_temperature, min_temperature, note_ch)
     os.system("pause")
